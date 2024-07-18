@@ -1,153 +1,73 @@
-# Scopes and Namespaces
+# Decorators
 
-# Global scopes are nested inside the built-in scope
-
-# The global keyword
-
-
-a = 0
-
-
-def my_func():
-    # global a
-    a = 100
-    print(a)
+# takes a fucntion as an argument
+# returns a closure
+# the closure usually accepts any combination of parameters
+# runs some code in the inner function (closure)
+# the closure function calls the original function using the arguments passed to the closure
+# returns whatever is returned by that function call
+from typing import Any
 
 
-my_func()
-print(a)
+def counter(fn: callable) -> callable:
+    count = 0
 
-
-# The nonloacl keyword
-def outer_func():
-    x = "hello"
-
-    def inner_fun():
-        # nonlocal x
-        x = "world"
-        y = 100
-        print(y)
-
-    inner_fun()
-    print(x)
-
-
-outer_func()
-
-
-# Closures
-# You can think of the closure as a function plus an extended scope that contains the free variables
-
-
-# The label x is in two different scopes but always reference the same 'value'
-# python does this by creating a cell as an intermediary object
-# in effect, both variables x (in outer and inner), point to the same cell
-# when requesting the value of the variable, python will 'double-hop' to get to the final value
-def outer():
-    x = "python"
-
-    def inner():
-        print(x)
+    def inner(*arg: Any, **kwargs: Any):
+        nonlocal count
+        count += 1
+        print(f"{fn.__name__} has been called {count} times")
+        return fn(*arg, **kwargs)
 
     return inner
 
 
-fn = outer()
-# introspection
-print(fn.__code__.co_freevars)
-print(fn.__closure__)
-
-
-def adder(n):
-    def inner(x):
-        return x + n
-
-    return inner
-
-
-a = adder(10)
-b = adder(20)
-
-print(a(5))
-print(b(5))
-print(a.__closure__)
-print(b.__closure__)
-
-# this is a error example
-adders = []
-for n in range(1, 4):
-    adders.append(lambda x: x + n)
-
-print(adders[0](10))
-print(adders[1](10))
-print(adders[2](10))
-print(adders[0].__closure__)
-print(adders[1].__closure__)
-print(adders[2].__closure__)
-print(adders[0].__code__.co_freevars)
-print(adders[1].__code__.co_freevars)
-print(adders[2].__code__.co_freevars)
-
-
-# closure applications
-# simplify a class with a method that needs to access the class instance
-class Averager:
-    def __init__(self) -> None:
-        self.numbers = []
-
-    def add(self, number):
-        self.numbers.append(number)
-        return sum(self.numbers) / len(self.numbers)
-
-
-a = Averager()
-print(a.add(10))
-print(a.add(20))
-print(a.add(30))
-
-
-def average() -> callable:
-    numbers = []
-
-    def inner(number: int) -> float:
-        numbers.append(number)
-        return sum(numbers) / len(numbers)
-
-    return inner
-
-
-ave = average()
-print(ave(10))
-print(ave(20))
-print(ave(30))
-
-
-# closures and decorators
-def add(a, b):
+def add(a: int, b=1) -> int:
     return a + b
 
 
-def mult(a, b):
+add = counter(add)
+print(add(10, 20))
+print(add(5))
+
+
+# Decorators and the @ symbol
+@counter
+def mult(a: int, b: int) -> int:
     return a * b
 
 
-def counter(fn, c):
+print(mult(10, 20))
+print(mult(12, 2))
+
+# Introspecting Decorated Functions
+print(f"add function name: {add.__name__}")
+# print(help(add))
+
+
+print(f"mult function name: {mult.__name__}")
+# print(help(mult))
+# Using functools module to fix the metadata of our inner function in our decorator
+import functools
+
+
+def new_counter(fn: callable) -> callable:
     count = 0
 
-    def inner(*args, **kwargs):
+    @functools.wraps(fn)
+    def inner(*arg: Any, **kwargs: Any):
         nonlocal count
         count += 1
-        c[fn.__name__] = count
-        return fn(*args, **kwargs)
+        print(f"{fn.__name__} has been called {count} times")
+        return fn(*arg, **kwargs)
 
     return inner
 
 
-c = {}
-add = counter(add, c)
-mult = counter(mult, c)
-print(add(10, 20))
-print(mult(10, 20))
-print(add(10, 20))
-print(mult(10, 20))
-print(c)
+def div(a, b):
+    return a / b
+
+
+div = new_counter(div)
+print(div(10, 20))
+print(f"div function name: {div.__name__}")
+# print(help(div))
