@@ -19,7 +19,7 @@ print(c, d, e, f, g, h, i)
 print(int("A12F", base=16))
 print(int("1010", base=2))
 
-# built-in functio
+# built-in function
 # hex(), oct(), bin()
 print(hex(10))
 print(oct(10))

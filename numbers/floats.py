@@ -8,7 +8,7 @@ print(format(y, ".25f"))
 print(x == y)
 print(round(x, 5) == round(y, 5))
 
-# flaot -> int  data loss
+# float -> int  data loss
 print(math.trunc(10.4))
 print(math.trunc(10.5))
 print(math.trunc(10.6))

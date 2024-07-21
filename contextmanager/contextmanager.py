@@ -46,9 +46,9 @@ import contextlib
 def open_file(fname):
     f = open(fname)
     try:
-        yield f
+        yield f  # -> __enter__
     finally:
-        f.close()
+        f.close()  # -> __exit__
 
 
 # Nested context
@@ -70,8 +70,10 @@ class NestedContext:
         return False
 
 
+# contextlib.ExitStack is like the NestedContext
+
 f_names = [".gitignore", "main.py"]
-with NestedContext() as nc:
+with contextlib.ExitStack() as nc:
     files = [nc.enter_context(open(fname)) for fname in f_names]
 
     for f in files:

@@ -6,12 +6,12 @@ print(int(False))
 # bool(0) -> False
 # bool(x) -> True for any int x != 0
 
-# every object has a ture value except:
+# every object has a true value except:
 # None
 # False
 # 0 in numeric type
 # empty sequences or mapping types
-# custom classes that implement a __bool__ or __len__ reutrn 0 or false
+# custom classes that implement a __bool__ or __len__ return 0 or false
 print(bool(None))
 print(bool(0))
 print(bool(""))
@@ -32,7 +32,7 @@ print(12 or 19)
 print(0 and 19)
 print(12 and 19)
 
-# comparision operators
+# comparison operators
 # is / is not
 # in / not in
 # > < >= <= == !=
