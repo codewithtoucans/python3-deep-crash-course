@@ -141,3 +141,26 @@ print(c.send(30))
 print(c.send(40))
 print(c.throw(TypeError("abc")))
 print(c.close())
+
+
+# yield from
+def echo():
+    while True:
+        try:
+            received = yield
+            print(received)
+        except TypeError:
+            print("TypeError")
+            pass
+
+
+@coroutine
+def delegator():
+    yield from echo()
+
+
+d = delegator()
+d.send("hello")
+d.send("world")
+d.throw(TypeError("abc"))
+d.close()
