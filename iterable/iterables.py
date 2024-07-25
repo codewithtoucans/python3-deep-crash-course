@@ -90,7 +90,7 @@ print(d)
 # an object that implements these two methods is called an iterator
 
 
-# The iterable protocal
+# The iterable protocol
 # __iter__ return a new instance of the iterator object
 # an object that implements these two methods is called an iterable
 class Cities:
